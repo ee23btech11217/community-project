@@ -9,9 +9,8 @@
 - [ ] I have claimed this task before submitting
 - [ ] My code follows the project guidelines
 - [ ] I have tested my code locally
-- [ ] Python code passes pylint (if applicable)
-- [ ] Verilog code compiles with iverilog (if applicable)
-- [ ] I have added comments to my code
+- [ ] Python code passes pylint
+- [ ] Verilog code compiles with iverilog 
 - [ ] I have updated documentation if needed
 
 ## Description
