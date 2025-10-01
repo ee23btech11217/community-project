@@ -1,0 +1,8 @@
+# Only organizer can approve changes to task definitions
+/tasks/tasks.json @ee23btech11217
+
+# Only organizer can modify guidelines
+/guidelines/ @ee23btech11217
+
+# Only organizer can modify workflows
+/.github/workflows/ @ee23btech11217

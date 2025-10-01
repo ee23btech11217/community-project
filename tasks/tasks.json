@@ -1,0 +1,54 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-10-01T00:00:00Z",
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "ALU Verification Script",
+      "type": "verification",
+      "description": "Write Python verification script for 32-bit ALU operations including add, sub, and, or, xor",
+      "status": "open",
+      "claimed_by": [],
+      "max_claims": 5,
+      "difficulty": "medium",
+      "points": 10,
+      "created_at": "2025-10-01T00:00:00Z",
+      "file_path": "submissions/task-001/",
+      "guideline_file": "guidelines/verification-guidelines.md"
+    },
+    {
+      "id": "task-002",
+      "title": "Register File Design",
+      "type": "design",
+      "description": "Design 32-register file in Verilog with dual read/write ports",
+      "status": "open",
+      "claimed_by": [],
+      "max_claims": 5,
+      "difficulty": "hard",
+      "points": 20,
+      "created_at": "2025-10-01T00:00:00Z",
+      "file_path": "submissions/task-002/",
+      "guideline_file": "guidelines/design-guidelines.md"
+    },
+    {
+      "id": "task-003",
+      "title": "Instruction Decoder Testbench",
+      "type": "testbench",
+      "description": "Create comprehensive testbench for instruction decoder",
+      "status": "open",
+      "claimed_by": [],
+      "max_claims": 5,
+      "difficulty": "medium",
+      "points": 15,
+      "created_at": "2025-10-01T00:00:00Z",
+      "file_path": "submissions/task-003/",
+      "guideline_file": "guidelines/testbench-guidelines.md"
+    }
+  ],
+  "users": {},
+  "config": {
+    "verification_threshold": 3,
+    "min_tasks_to_verify": 2,
+    "max_concurrent_claims": 3
+  }
+}

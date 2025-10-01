@@ -1,0 +1,63 @@
+name: Verify Verilog Submission
+
+on:
+  pull_request:
+    paths:
+      - 'submissions/**/*.v'
+      - 'submissions/**/*.sv'
+
+jobs:
+  test-verilog:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Icarus Verilog
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog gtkwave
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v39
+        with:
+          files: |
+            submissions/**/*.v
+            submissions/**/*.sv
+
+      - name: Compile Verilog files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "Compiling $file"
+            iverilog -o /tmp/test.out "$file" && echo "✅ $file compiled successfully" || echo "❌ $file compilation failed"
+          done
+
+      - name: Run testbenches
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            if [[ "$file" == *"testbench"* ]] || [[ "$file" == *"tb"* ]]; then
+              echo "Running testbench $file"
+              iverilog -o /tmp/tb.out "$file"
+              vvp /tmp/tb.out || echo "Testbench execution completed"
+            fi
+          done
+
+      - name: Check for syntax errors
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "Syntax check: $file"
+            iverilog -t null "$file" && echo "✅ No syntax errors" || echo "❌ Syntax errors found"
+          done
+
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Verilog compilation checks completed! Organizer review required.'
+            })
