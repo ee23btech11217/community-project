@@ -15,29 +15,24 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // ====== CONFIGURATION - UPDATE THESE VALUES ======
         const GITHUB_CONFIG = {
             owner: 'ee23btech11217', 
             repo: 'community-project',   
             clientId: 'Ov23li3gWxEwbhfrupj9'
         };
-        // ================================================
 
         const App = () => {
             const [user, setUser] = useState(null);
             const [tasks, setTasks] = useState([]);
-            const [users, setUsers] = useState({});
             const [loading, setLoading] = useState(true);
             const [activeTab, setActiveTab] = useState('tasks');
             const [filterType, setFilterType] = useState('all');
             const [authLoading, setAuthLoading] = useState(false);
 
-            // Load tasks from GitHub repository
             useEffect(() => {
                 loadTasksFromGitHub();
             }, []);
 
-            // Check if user is already logged in from localStorage
             useEffect(() => {
                 const storedUser = localStorage.getItem('github_user');
                 if (storedUser) {
@@ -45,7 +40,6 @@
                 }
             }, []);
 
-            // Handle OAuth callback
             useEffect(() => {
                 const urlParams = new URLSearchParams(window.location.search);
                 const code = urlParams.get('code');
@@ -86,7 +80,6 @@
                     if (response.ok) {
                         const data = await response.json();
                         setTasks(data.tasks || []);
-                        setUsers(data.users || {});
                     } else {
                         console.error('Could not load tasks. Make sure tasks.json exists in your repo.');
                     }
@@ -106,16 +99,6 @@
                 localStorage.removeItem('github_user');
             };
 
-            const getUserStats = (username) => {
-                return users[username] || {
-                    completed_tasks: 0,
-                    verified_tasks: 0,
-                    reputation_score: 0,
-                    can_verify: false,
-                    claimed_tasks: []
-                };
-            };
-
             const claimTask = (taskId) => {
                 if (!user) {
                     alert('Please sign in with GitHub to claim tasks');
@@ -123,12 +106,6 @@
                 }
 
                 const task = tasks.find(t => t.id === taskId);
-                if (task.claimed_by.length >= task.max_claims) {
-                    alert('Maximum number of contributors reached for this task');
-                    return;
-                }
-
-                // Open GitHub to create an issue
                 const issueTitle = `Claim: ${task.title}`;
                 const issueBody = `I would like to claim task ${taskId}: ${task.title}
 
@@ -141,12 +118,6 @@ I will submit my work via Pull Request to \`${task.file_path}\``;
                 const issueUrl = `https://github.com/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/issues/new?title=${encodeURIComponent(issueTitle)}&body=${encodeURIComponent(issueBody)}`;
                 
                 window.open(issueUrl, '_blank');
-            };
-
-            const submitTask = (taskId) => {
-                const task = tasks.find(t => t.id === taskId);
-                const prUrl = `https://github.com/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/compare/main...main?quick_pull=1&title=Submit:%20${encodeURIComponent(task.title)}&body=Task%20ID:%20${taskId}`;
-                window.open(prUrl, '_blank');
             };
 
             const filteredTasks = tasks.filter(task => {
@@ -178,21 +149,14 @@ I will submit my work via Pull Request to \`${task.file_path}\``;
                                 }`}>
                                     {task.difficulty}
                                 </span>
-                                <span>⭐ {task.points} points</span>
-                                <span>👥 {task.claimed_by.length}/{task.max_claims} claimed</span>
                             </div>
                         </div>
                         <div className="flex gap-2 ml-4">
                             <button
                                 onClick={() => claimTask(task.id)}
-                                disabled={task.claimed_by.length >= task.max_claims}
-                                className={`px-4 py-2 rounded-lg font-medium ${
-                                    task.claimed_by.length >= task.max_claims
-                                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                        : 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                }`}
+                                className="px-4 py-2 rounded-lg font-medium bg-indigo-600 text-white hover:bg-indigo-700"
                             >
-                                {task.claimed_by.length >= task.max_claims ? 'Full' : 'Claim Task'}
+                                Claim Task
                             </button>
                         </div>
                     </div>
@@ -201,7 +165,6 @@ I will submit my work via Pull Request to \`${task.file_path}\``;
 
             return (
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-                    {/* Header */}
                     <header className="bg-white shadow-sm border-b">
                         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -241,9 +204,7 @@ I will submit my work via Pull Request to \`${task.file_path}\``;
                         </div>
                     </header>
 
-                    {/* Main Content */}
                     <main className="max-w-7xl mx-auto px-4 py-8">
-                        {/* Tabs */}
                         <div className="bg-white rounded-lg shadow-sm mb-6">
                             <div className="border-b">
                                 <div className="flex">
@@ -280,7 +241,6 @@ I will submit my work via Pull Request to \`${task.file_path}\``;
                                 </div>
                             </div>
 
-                            {/* Tasks Tab */}
                             {activeTab === 'tasks' && (
                                 <div className="p-6">
                                     <div className="flex gap-2 mb-6">
@@ -311,7 +271,6 @@ I will submit my work via Pull Request to \`${task.file_path}\``;
                                 </div>
                             )}
 
-                            {/* Guidelines Tab */}
                             {activeTab === 'guidelines' && (
                                 <div className="p-6 prose max-w-none">
                                     <h2 className="text-2xl font-bold mb-4">Contribution Guidelines</h2>
@@ -361,7 +320,6 @@ I will submit my work via Pull Request to \`${task.file_path}\``;
                                 </div>
                             )}
 
-                            {/* Setup Tab */}
                             {activeTab === 'setup' && (
                                 <div className="p-6 prose max-w-none">
                                     <h2 className="text-2xl font-bold mb-4">Setup Instructions</h2>
